@@ -1,26 +1,34 @@
+// Connect to MongoDB and use the database (create it if it doesn't exist)
+use libraryDB;
 
-// Part 1: Create a Collection and Insert Data
-use yourDatabaseName;
-db.createCollection("books");
+// Step 1: Create the 'books' collection and insert sample data
 db.books.insertMany([
-  { title: "The Hobbit", author: "J.R.R. Tolkien", genre: "Fantasy", year: 1937 },
-  { title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Fiction", year: 1960 },
-  { title: "1984", author: "George Orwell", genre: "Dystopian", year: 1949 }
+    { title: "The Hobbit", author: "J.R.R. Tolkien", genre: "Fantasy", year: 1937 },
+    { title: "To Kill a Mockingbird", author: "Harper Lee", genre: "Fiction", year: 1960 },
+    { title: "1984", author: "George Orwell", genre: "Dystopian", year: 1949 }
 ]);
 
-// Part 2: Queries
+// Step 2: Retrieve the titles of all books
+print("Titles of all books:");
+db.books.find({}, { title: 1, _id: 0 }).forEach(book => printjson(book));
 
-// 1. Retrieve Titles of All Books
-db.books.find({}, { title: 1, _id: 0 });
+// Step 3: Find all books written by "J.R.R. Tolkien"
+print("Books written by J.R.R. Tolkien:");
+db.books.find({ author: "J.R.R. Tolkien" }).forEach(book => printjson(book));
 
-// 2. Find Books by J.R.R. Tolkien
-db.books.find({ author: "J.R.R. Tolkien" });
-
-// 3. Update the Genre of 1984
+// Step 4: Update the genre of "1984" to "Science Fiction"
 db.books.updateOne(
-  { title: "1984" },
-  { $set: { genre: "Science Fiction" } }
+    { title: "1984" },
+    { $set: { genre: "Science Fiction" } }
 );
 
-// 4. Delete The Hobbit
+// Verify the update
+print("Updated book details for '1984':");
+db.books.find({ title: "1984" }).forEach(book => printjson(book));
+
+// Step 5: Delete the book "The Hobbit"
 db.books.deleteOne({ title: "The Hobbit" });
+
+// Verify the deletion
+print("Books after deleting 'The Hobbit':");
+db.books.find().forEach(book => printjson(book));
